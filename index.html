@@ -27,8 +27,9 @@
           var tweet = streams.home[index];
           var $tweet = $('<div></div>');
           var time = '[' + tweet.created_at.toLocaleTimeString() + '] ';
+
           $tweet.text(time + '@' + tweet.user + ': ' + tweet.message);
-          $tweet.appendTo(body);
+          $tweet.prependTo(body);
           index -= 1;
         }
 
