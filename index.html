@@ -2,20 +2,21 @@
 <html>
   <head>
     <script src="jquery.js"></script>
+    <!--<script src="moment.js"></script>-->
     <script src="data_generator.js"></script>
     <style>
       .time {
-        color: gray;
         margin: 0 5px;
+        float: right;
       }
 
       .user {
-        font-weight: bold;
-        margin: 0 5px 0 0;
+        margin: 0 5px;
+        color: #FFF;
       }
 
       .message {
-        margin-left: 20px;
+        padding: 0 10px 10px 10px;
       }
 
       .back {
@@ -24,6 +25,20 @@
         color: white;
         background-color: blue;
         border-radius: 4px;
+      }
+
+      .tweet{
+        width: 350px;
+        margin: 5px auto;
+        background-color: #E4E4E4;
+        border-radius: 4px;
+      }
+
+      .title {
+        color: #E4E4E4;
+        background-color: #6C6C6C;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
       }
     </style>
   </head>
@@ -61,7 +76,7 @@
         interval = setInterval(function(){lastIndex = getTweets(lastIndex, body);}, 1500);
         return interval;
       }
-      
+
       function stopTweets (interval){
         clearInterval(interval);
         return null;
@@ -80,10 +95,11 @@
 
       function postTweet(tweet, body){
         var $tweet = $('<div></div>').attr("data-created", tweet.created_at).attr("data-user", tweet.user).addClass("tweet");
-        var $time = $('<span></span>').addClass("time").text('[' + tweet.created_at.toLocaleTimeString() + ']');
-        var $user = $('<span></span>').addClass("user").text('@' + tweet.user + ':');
+        var $title = $('<div></div>').addClass("title");
+        var $time = $('<span></span>').addClass("time").text('[' + tweet.created_at.toLocaleTimeString() + ']').prependTo($title);
+        var $user = $('<span></span>').addClass("user").text('@' + tweet.user + ':').prependTo($title);
         var $message  = $('<p></p>').addClass("message").text(tweet.message);
-        $tweet.append($time, $user, $message);
+        $tweet.append($title, $message);
         $tweet.prependTo(body);
       }
 
