@@ -17,6 +17,14 @@
       .message {
         margin-left: 20px;
       }
+
+      .back {
+        float: right;
+        margin: 20px;
+        color: white;
+        background-color: blue;
+        border-radius: 4px;
+      }
     </style>
   </head>
   <body>
@@ -25,15 +33,39 @@
 
   
     <script>
-
       $(document).ready(function(){
         var lastIndex = 0;
+        var interval;
         var $body = $('body');
         $body.html('');
-        
-        setInterval(function(){lastIndex = getTweets(lastIndex, $body);}, 1500);
 
+        interval = startTweets(lastIndex, interval, $body);
+        
+        //TODO: If I add more layout, this should call from the lowest level static container.
+        $($body).on('click', '.tweet', function(){
+          interval = stopTweets(interval);
+          $body.empty();
+          showUserTweets($(this).data("user"), $body);
+          showBackButton($body);
+        });
+
+        $($body).on('click', '.back', function(){
+          $body.empty();
+          interval = startTweets(lastIndex, interval, $body);
+          $(this).remove();
+        });
       });
+
+      function startTweets (lastIndex, interval, body){
+        if (interval) return;
+        interval = setInterval(function(){lastIndex = getTweets(lastIndex, body);}, 1500);
+        return interval;
+      }
+      
+      function stopTweets (interval){
+        clearInterval(interval);
+        return null;
+      }
 
       function getTweets(lastIndex, body){
         var index = streams.home.length - 1;
@@ -47,10 +79,9 @@
       }
 
       function postTweet(tweet, body){
-
-        var $tweet = $('<div></div>');
+        var $tweet = $('<div></div>').attr("data-created", tweet.created_at).attr("data-user", tweet.user).addClass("tweet");
         var $time = $('<span></span>').addClass("time").text('[' + tweet.created_at.toLocaleTimeString() + ']');
-        var $user = $('<span></span>').addClass("user").text('@' + tweet.user + ':').data("user", tweet.user);
+        var $user = $('<span></span>').addClass("user").text('@' + tweet.user + ':');
         var $message  = $('<p></p>').addClass("message").text(tweet.message);
         $tweet.append($time, $user, $message);
         $tweet.prependTo(body);
@@ -58,8 +89,16 @@
 
       function showUserTweets(user, body){
         var userTweets = streams.users[user];
-        body.empty();
+        var index = userTweets.length - 1;
 
+        while (index >= 0) {
+          postTweet(userTweets[index], body);
+          index--;
+        }
+      }
+
+      function showBackButton(body) {
+        $('<button></button>').addClass("back").text("Go Back").prependTo(body);
       }
 
     </script>
