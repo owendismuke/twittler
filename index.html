@@ -3,6 +3,21 @@
   <head>
     <script src="jquery.js"></script>
     <script src="data_generator.js"></script>
+    <style>
+      .time {
+        color: gray;
+        margin: 0 5px;
+      }
+
+      .user {
+        font-weight: bold;
+        margin: 0 5px 0 0;
+      }
+
+      .message {
+        margin-left: 20px;
+      }
+    </style>
   </head>
   <body>
 
@@ -16,7 +31,7 @@
         var $body = $('body');
         $body.html('');
         
-        setInterval(function(){lastIndex = getTweets(lastIndex, $body);}, 1000);
+        setInterval(function(){lastIndex = getTweets(lastIndex, $body);}, 1500);
 
       });
 
@@ -24,18 +39,28 @@
         var index = streams.home.length - 1;
         var result = index;
         while(index > lastIndex){
-          var tweet = streams.home[index];
-          var $tweet = $('<div></div>');
-          var time = '[' + tweet.created_at.toLocaleTimeString() + '] ';
-
-          $tweet.text(time + '@' + tweet.user + ': ' + tweet.message);
-          $tweet.prependTo(body);
+          postTweet(streams.home[index], body);
           index -= 1;
         }
 
         return result;
       }
 
+      function postTweet(tweet, body){
+
+        var $tweet = $('<div></div>');
+        var $time = $('<span></span>').addClass("time").text('[' + tweet.created_at.toLocaleTimeString() + ']');
+        var $user = $('<span></span>').addClass("user").text('@' + tweet.user + ':').data("user", tweet.user);
+        var $message  = $('<p></p>').addClass("message").text(tweet.message);
+        $tweet.append($time, $user, $message);
+        $tweet.prependTo(body);
+      }
+
+      function showUserTweets(user, body){
+        var userTweets = streams.users[user];
+        body.empty();
+
+      }
 
     </script>
   </body>
